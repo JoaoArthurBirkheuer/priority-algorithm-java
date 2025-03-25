@@ -1,8 +1,6 @@
 package com.mycompany.vorazesefamintos;
 
-import java.util.PriorityQueue;
-import java.util.Scanner;
-import com.mycompany.vorazesefamintos.Bebedouro;
+import java.util.*;
 
 public class Simulador {
     public static void main(String[] args) {
@@ -13,44 +11,73 @@ public class Simulador {
         System.out.print("Digite o número de famintos: ");
         int numFamintos = scanner.nextInt();
 
+        // Fila de famintos com as prioridades para comer e beber
         PriorityQueue<Faminto> filaFome = new PriorityQueue<>();
         PriorityQueue<Faminto> filaSede = new PriorityQueue<>();
         Alimentador alimentador = Alimentador.getInstance();
         Bebedouro bebedouro = new Bebedouro();
+        Reservatorio reservatorio = Reservatorio.getInstance();
 
+        // Preenche as filas com famintos
         for (int i = 0; i < numFamintos; i++) {
-            filaFome.add(new Faminto());
-            filaSede.add(new Faminto());
+            Faminto faminto = new Faminto();
+            filaFome.add(faminto);
+            filaSede.add(faminto);
         }
 
-        for (int i = 1; i <= ciclos; i++) {
-            System.out.println("=== Ciclo " + i + " ===");
+        // Processamento dos ciclos
+        for (int ciclo = 1; ciclo <= ciclos; ciclo++) {
+            System.out.println("\n=== Ciclo " + ciclo + " ===");
 
-            if (!alimentador.isOcupado() && !filaFome.isEmpty()) {
-                Faminto faminto = filaFome.poll();
-                alimentador.alimentar(faminto);
+            // Mostra as filas
+            System.out.println("\nFila de Fome:");
+            for (Faminto f : filaFome) {
+                System.out.println(" - " + f);
             }
 
-            if (!bebedouro.isOcupado() && !filaSede.isEmpty()) {
-                Faminto faminto = filaSede.poll();
-                bebedouro.beber(faminto);
+            System.out.println("\nFila de Sede:");
+            for (Faminto f : filaSede) {
+                System.out.println(" - " + f);
             }
 
+            // Cria uma lista para intercalar as decisões
+            List<Faminto> famintos = new ArrayList<>();
+            famintos.addAll(filaFome);
+            famintos.addAll(filaSede);
+
+            // Itera pelos famintos alternando entre as decisões
+            for (Faminto faminto : famintos) {
+                String decisao = faminto.decidirAcao();
+                
+                if (decisao.equals("comer")) {
+                    if (!alimentador.isOcupado()) {
+                        alimentador.alimentar(faminto);
+                        System.out.println("Faminto " + faminto.id + " começou a se alimentar.");
+                    } else {
+                        System.out.println("Faminto " + faminto.id + " tentou se alimentar, mas o alimentador estava ocupado.");
+                    }
+                } else if (decisao.equals("beber")) {
+                    if (!bebedouro.isOcupado()) {
+                        bebedouro.beber(faminto);
+                    } else {
+                        System.out.println("Faminto " + faminto.id + " tentou beber, mas o bebedouro estava ocupado.");
+                    }
+                } else {
+                    System.out.println("Faminto " + faminto.id + " decidiu dançar.");
+                }
+            }
+
+            // Atualiza o estado dos recursos
             alimentador.update();
             bebedouro.update();
+            reservatorio.armazenarAgua();
 
-            System.out.println(alimentador.getStatus());
+            // Mostra o status final do ciclo
+            System.out.println("\n" + alimentador.getStatus());
             System.out.println(bebedouro.getStatus());
-
-            for (Faminto f : filaFome) {
-                f.incrementarFomeESede();
-            }
-            for (Faminto f : filaSede) {
-                f.incrementarFomeESede();
-            }
+            System.out.println(reservatorio.getStatus());
         }
 
         scanner.close();
     }
 }
-

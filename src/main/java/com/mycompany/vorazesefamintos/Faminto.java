@@ -25,13 +25,20 @@ public class Faminto implements Comparable<Faminto> {
         ciclosSemBeber++;
     }
 
+    public String decidirAcao() {
+        double chance = random.nextDouble();
+        if (chance < 0.45) {
+            return "comer";
+        } else if (chance < 0.9) {
+            return "beber";
+        } else {
+            return "dancar";
+        }
+    }
+
     @Override
     public int compareTo(Faminto outro) {
-        if (this.nivelFome != outro.nivelFome) return Integer.compare(outro.nivelFome, this.nivelFome);
-        if (this.nivelSede != outro.nivelSede) return Integer.compare(outro.nivelSede, this.nivelSede);
-        if (this.ciclosSemComer != outro.ciclosSemComer) return Integer.compare(outro.ciclosSemComer, this.ciclosSemComer);
-        if (this.ciclosSemBeber != outro.ciclosSemBeber) return Integer.compare(outro.ciclosSemBeber, this.ciclosSemBeber);
-        return Integer.compare(this.id, outro.id);
+        return Integer.compare(outro.nivelFome + outro.nivelSede, this.nivelFome + this.nivelSede);
     }
 
     @Override
@@ -39,4 +46,3 @@ public class Faminto implements Comparable<Faminto> {
         return "Faminto " + id + " [Fome: " + nivelFome + ", Sede: " + nivelSede + "]";
     }
 }
-
