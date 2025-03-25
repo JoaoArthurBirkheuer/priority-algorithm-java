@@ -1,33 +1,53 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.vorazesefamintos;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
-/**
- *
- * @author 20231PF.CC0022
- */
 public class Bebedouro {
-    
-    private boolean occupied;
+    private boolean ocupado = false;
+    private int currentFamintoId = -1;
+    private int remainingTime = 0;
+    private Map<Integer, Integer> registroInterrupcao = new HashMap<>();
+    private Random random = new Random();
+    private int reservatorio = 10;
 
-    public boolean isOccupied() {
-        return occupied;
+    public synchronized boolean isOcupado() {
+        return ocupado;
     }
 
-    public void setOccupied(boolean occupied) {
-        this.occupied = occupied;
+    public synchronized void beber(Faminto f) {
+        if (ocupado) return;
+
+        ocupado = true;
+        currentFamintoId = f.id;
+
+        if (registroInterrupcao.containsKey(f.id)) {
+            remainingTime = registroInterrupcao.remove(f.id);
+        } else {
+            remainingTime = 2 + random.nextInt(2);
+        }
     }
-    
-    public void diminuirNecessidade(Faminto f){
-        int[] v = new int[3];
-        v[0] = f.getNecessityLevels()[0];
-        v[1] = f.getNecessityLevels()[1] - new Random().nextInt(f.getNecessityLevels()[1]);
-        v[2] = f.getNecessityLevels()[2];
-        f.setNecessityLevels(v);
+
+    public synchronized void update() {
+        if (ocupado) {
+            if (random.nextDouble() < 0.1) {
+                registroInterrupcao.put(currentFamintoId, remainingTime);
+                ocupado = false;
+                currentFamintoId = -1;
+                remainingTime = 0;
+            } else {
+                remainingTime--;
+                if (remainingTime <= 0) {
+                    ocupado = false;
+                    currentFamintoId = -1;
+                }
+            }
+        }
     }
-    
+
+    public synchronized String getStatus() {
+        return ocupado ? "Bebedouro ocupado por Faminto " + currentFamintoId + " (restam " + remainingTime + " ciclos)" : "Bebedouro livre";
+    }
 }
+

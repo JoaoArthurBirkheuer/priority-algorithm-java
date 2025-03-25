@@ -1,36 +1,42 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.vorazesefamintos;
 import java.util.Random;
-/**
- *
- * @author 20231PF.CC0022
- */
-public class Faminto {
-    // private Necessity necessity; // 0 - dance | 1 - comer | 2 - beber
-    // bebedouro ou alimentador
-    private int[] necessityLevels = new int[3];
+
+public class Faminto implements Comparable<Faminto> {
+    private static int contador = 0;
+    public int id;
+    public int nivelFome;
+    public int nivelSede;
+    public int ciclosSemComer;
+    public int ciclosSemBeber;
+    private Random random = new Random();
 
     public Faminto() {
-    }
-    public Faminto(int da, int ea, int dr){
-        this.necessityLevels[0] = da;
-        this.necessityLevels[1] = ea;
-        this.necessityLevels[2] = dr;
-    }
-    
-    public void waiting(){
-        for(int i=0;i<3;i++)
-            this.necessityLevels[i] += new Random().nextInt(5);
+        this.id = ++contador;
+        this.nivelFome = random.nextInt(10) + 1;
+        this.nivelSede = random.nextInt(10) + 1;
+        this.ciclosSemComer = 0;
+        this.ciclosSemBeber = 0;
     }
 
-    public int[] getNecessityLevels() {
-        return necessityLevels;
+    public void incrementarFomeESede() {
+        nivelFome += random.nextInt(3);
+        nivelSede += random.nextInt(3);
+        ciclosSemComer++;
+        ciclosSemBeber++;
     }
 
-    public void setNecessityLevels(int[] necessityLevels) {
-        this.necessityLevels = necessityLevels;
+    @Override
+    public int compareTo(Faminto outro) {
+        if (this.nivelFome != outro.nivelFome) return Integer.compare(outro.nivelFome, this.nivelFome);
+        if (this.nivelSede != outro.nivelSede) return Integer.compare(outro.nivelSede, this.nivelSede);
+        if (this.ciclosSemComer != outro.ciclosSemComer) return Integer.compare(outro.ciclosSemComer, this.ciclosSemComer);
+        if (this.ciclosSemBeber != outro.ciclosSemBeber) return Integer.compare(outro.ciclosSemBeber, this.ciclosSemBeber);
+        return Integer.compare(this.id, outro.id);
+    }
+
+    @Override
+    public String toString() {
+        return "Faminto " + id + " [Fome: " + nivelFome + ", Sede: " + nivelSede + "]";
     }
 }
+
