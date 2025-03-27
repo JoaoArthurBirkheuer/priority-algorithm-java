@@ -1,4 +1,5 @@
 package com.mycompany.vorazesefamintos;
+
 import java.util.Random;
 
 public class Faminto implements Comparable<Faminto> {
@@ -8,7 +9,12 @@ public class Faminto implements Comparable<Faminto> {
     public int nivelSede;
     public int ciclosSemComer;
     public int ciclosSemBeber;
+    public Estado estado;
     private Random random = new Random();
+
+    public enum Estado {
+        NA_FILA, COMENDO, BEBENDO, DANCA
+    }
 
     public Faminto() {
         this.id = ++contador;
@@ -16,9 +22,11 @@ public class Faminto implements Comparable<Faminto> {
         this.nivelSede = random.nextInt(10) + 1;
         this.ciclosSemComer = 0;
         this.ciclosSemBeber = 0;
+        this.estado = Estado.NA_FILA;
     }
 
     public void incrementarFomeESede() {
+        // Incrementa os níveis independentemente da ação para simular o passar do tempo
         nivelFome += random.nextInt(3);
         nivelSede += random.nextInt(3);
         ciclosSemComer++;
@@ -38,11 +46,15 @@ public class Faminto implements Comparable<Faminto> {
 
     @Override
     public int compareTo(Faminto outro) {
-        return Integer.compare(outro.nivelFome + outro.nivelSede, this.nivelFome + this.nivelSede);
+        // Ordena priorizando a fome; em caso de empate, a sede
+        if (this.nivelFome != outro.nivelFome) {
+            return Integer.compare(outro.nivelFome, this.nivelFome);
+        }
+        return Integer.compare(outro.nivelSede, this.nivelSede);
     }
 
     @Override
     public String toString() {
-        return "Faminto " + id + " [Fome: " + nivelFome + ", Sede: " + nivelSede + "]";
+        return "Faminto " + id + " [Fome: " + nivelFome + ", Sede: " + nivelSede + ", Estado: " + estado + "]";
     }
 }

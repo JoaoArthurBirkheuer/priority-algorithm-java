@@ -3,8 +3,8 @@ package com.mycompany.vorazesefamintos;
 import java.util.Random;
 
 public class Reservatorio {
+    private static Reservatorio instance; // Singleton instance
     private int quantidadeAgua = 10;
-    private static Reservatorio instance;
     private Random random = new Random();
 
     private Reservatorio() {}
